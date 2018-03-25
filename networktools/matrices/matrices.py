@@ -1,4 +1,7 @@
-from networktools.files.sanitizer import sanitize_string
+# from ..files.sanitizer import sanitize_string
+from networktools.files import sanitizer
+
+from validation import is_pairs_network
 
 try: 
     import networkx as nx
@@ -34,8 +37,29 @@ class AdjacencyMatrix:
                 graph.add_edges_from([(event[i], event[j]) for i in xrange(len(event)) 
                     for j in xrange(i + 1, len(event))])
         else: 
-            graph.add_edges_from(self.rows)            
+            if is_pairs_network(self.rows): 
+                graph.add_edges_from(self.rows)            
+            else: 
+                print 'This is not a node pairs file.'
+                return None
         return graph
+
+    def get_overlap(self, a, b): 
+        return set(a).intersection(set(b))
+
+    def get_unique(self, a, b): 
+        return set(a) - set(b)
+
+    def compare(self, matrix): 
+        graph_a = self.create_graph()
+        graph_b = matrix.create_graph()
+
+        nodes_a, edges_a = graph_a.nodes(), graph_a.edges()
+        nodes_b, edges_b = graph_b.nodes(), graph_b.edges()
+
+        return (self.get_overlap(nodes_a, nodes_b), self.get_overlap(edges_a, edges_b),
+            self.get_unique(nodes_a, nodes_b), self.get_unique(nodes_b, nodes_a), 
+            self.get_unique(edges_a, edges_b), self.get_unique(edges_b, edges_a))
 
     def build(self): 
         graph = self.create_graph()        
@@ -47,3 +71,14 @@ class AdjacencyMatrix:
 
         labels.insert(0, '')
         return self.get_matrix_name(), pd.DataFrame.from_records(adjacency_matrix, columns=labels)
+
+a = [
+    ['A', 'B'], 
+    ['A', 'C'],
+    ['C', 'D'],
+    ['B', 'C']
+]
+
+mat = AdjacencyMatrix('mat1', a, header=False, from_events=False)
+
+print mat.build()
