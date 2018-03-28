@@ -71,24 +71,24 @@ class AdjacencyMatrix:
         labels.insert(0, '')
         return self.get_matrix_name(), pd.DataFrame.from_records(adjacency_matrix, columns=labels)
 
-a = [
-    ['A', 'B'], 
-    ['A', 'C'],
-    ['C', 'D'],
-    ['B', 'C']
-]
+# a = [
+#     ['A', 'B'], 
+#     ['A', 'C'],
+#     ['C', 'D'],
+#     ['B', 'C']
+# ]
 
-b = [
-    ['A', 'B'], 
-    ['C', 'D'],
-    ['B', 'C'], 
-    ['E', 'C'],
-    ['E', 'F'], 
-]
+# b = [
+#     ['A', 'B'], 
+#     ['C', 'D'],
+#     ['B', 'C'], 
+#     ['E', 'C'],
+#     ['E', 'F'], 
+# ]
 
-mat1 = AdjacencyMatrix('mat1', a, header=False, from_events=False)
-mat2 = AdjacencyMatrix('mat2', b, header=False, from_events=False)
+# mat1 = AdjacencyMatrix('mat1', a, header=False, from_events=False)
+# mat2 = AdjacencyMatrix('mat2', b, header=False, from_events=False)
 
-for i in mat1.compare(mat2): 
-    print i
-    print 
+# for i in mat1.compare(mat2): 
+#     print i
+#     print 
