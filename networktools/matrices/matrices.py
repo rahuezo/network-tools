@@ -1,7 +1,6 @@
-# from ..files.sanitizer import sanitize_string
-from networktools.files import sanitizer
-
+from files.sanitizer import sanitize_string
 from validation import is_pairs_network
+from formatting import add_padding
 
 try: 
     import networkx as nx
@@ -57,9 +56,9 @@ class AdjacencyMatrix:
         nodes_a, edges_a = graph_a.nodes(), graph_a.edges()
         nodes_b, edges_b = graph_b.nodes(), graph_b.edges()
 
-        return (self.get_overlap(nodes_a, nodes_b), self.get_overlap(edges_a, edges_b),
+        return add_padding([self.get_overlap(nodes_a, nodes_b), self.get_overlap(edges_a, edges_b),
             self.get_unique(nodes_a, nodes_b), self.get_unique(nodes_b, nodes_a), 
-            self.get_unique(edges_a, edges_b), self.get_unique(edges_b, edges_a))
+            self.get_unique(edges_a, edges_b), self.get_unique(edges_b, edges_a)])
 
     def build(self): 
         graph = self.create_graph()        
@@ -79,6 +78,17 @@ a = [
     ['B', 'C']
 ]
 
-mat = AdjacencyMatrix('mat1', a, header=False, from_events=False)
+b = [
+    ['A', 'B'], 
+    ['C', 'D'],
+    ['B', 'C'], 
+    ['E', 'C'],
+    ['E', 'F'], 
+]
 
-print mat.build()
+mat1 = AdjacencyMatrix('mat1', a, header=False, from_events=False)
+mat2 = AdjacencyMatrix('mat2', b, header=False, from_events=False)
+
+for i in mat1.compare(mat2): 
+    print i
+    print 
