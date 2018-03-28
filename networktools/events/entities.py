@@ -58,13 +58,13 @@ def stanford_ner_to_tree(text):
 
 def get_people(text): 
     tree = stanford_ner_to_tree(text)
-    people = []
+    people = set()
 
     for subtree in tree: 
         if type(subtree) == Tree: 
             if subtree.label() == 'PERSON': 
-                people.append(' '.join([token for token, pos in subtree.leaves()]))
-    return people
+                people.add(' '.join([token for token, pos in subtree.leaves()]))
+    return sorted(list(people))
 
 
 
