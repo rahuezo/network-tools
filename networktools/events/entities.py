@@ -1,8 +1,3 @@
-try: 
-    import spacy 
-except ImportError: 
-    print 'Need to install spacy first. Use pip install spacy && python -m spacy download en'
-
 from nltk.tag import StanfordNERTagger
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag

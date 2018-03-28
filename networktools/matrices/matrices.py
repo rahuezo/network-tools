@@ -1,4 +1,4 @@
-from files.sanitizer import sanitize_string
+from networktools.files.sanitizer import sanitize_string
 from validation import is_pairs_network
 from formatting import add_padding
 

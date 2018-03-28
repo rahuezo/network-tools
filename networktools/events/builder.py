@@ -1,5 +1,5 @@
-from files.readers import FileReader
-from files.sanitizer import sanitize_string
+from networktools.files.readers import FileReader
+from networktools.files.sanitizer import sanitize_string
 from entities import get_people
 
 import pandas as pd
