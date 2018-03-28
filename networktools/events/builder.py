@@ -2,7 +2,6 @@ from files.readers import FileReader
 from files.sanitizer import sanitize_string
 from entities import get_people
 
-import tkFileDialog as fd
 import pandas as pd
 
 
@@ -28,12 +27,8 @@ class EventBuilder:
         for f in self.files:             
             header = EventBuilder.get_event_header(f, online=False)
             text = FileReader(f).read()
-            events[header] = get_people(text)
+            people = get_people(text)
+
+            if people: 
+                events[header] = people
         return EventBuilder.dict_to_rows(events)
-
-
-files = fd.askopenfilenames(title="Choose .txt and .docx files")
-
-ev = EventBuilder(files)
-
-print ev.build()
