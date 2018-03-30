@@ -9,6 +9,6 @@ setup(
     author='Rudy Huezo',
     author_email='rahuezo@ucdavis.edu',
     license='MIT',
-    packages=['networktools'],
+    packages=['networktools.files', 'networktools.matrices', 'networktools.events'],
     zip_safe=False
 )
