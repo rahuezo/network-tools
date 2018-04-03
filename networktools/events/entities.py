@@ -4,9 +4,19 @@ from nltk import pos_tag
 from nltk.chunk import conlltags2tree
 from nltk.tree import Tree
 
+import os, sys
 
-CLASSIFIER = '/home/rudyhuezo/Downloads/stanford-ner-2018-02-27/classifiers/english.muc.7class.distsim.crf.ser.gz'
-JAR_FILE = '/home/rudyhuezo/Downloads/stanford-ner-2018-02-27/stanford-ner.jar'
+
+SNER_ROOT = '/home/rahuezo/Downloads/stanford-ner-2018-02-27'
+CLASSIFIER = os.path.join(SNER_ROOT, 'classifiers/english.muc.7class.distsim.crf.ser.gz')
+JAR_FILE = os.path.join('stanford-ner.jar')
+
+if not os.path.exists(SNER_ROOT): 
+    print """You need to download SNER from https://nlp.stanford.edu/software/stanford-ner-2018-02-27.zip.
+    Extract the folder and change SNER_ROOT"""
+    sys.exit()
+
+
 
 
 def stanford_ner(text): 
