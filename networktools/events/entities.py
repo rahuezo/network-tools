@@ -1,12 +1,12 @@
+import os, sys
+os.environ['JAVA_HOME'] = '/usr/share/java'
+
 from nltk.tag import StanfordNERTagger
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.chunk import conlltags2tree
 from nltk.tree import Tree
 
-import os, sys
-
-os.environ['JAVAHOME'] = '/usr/share/java'
 
 SNER_ROOT = '/home/rahuezo/Downloads/stanford-ner-2018-02-27'
 CLASSIFIER = os.path.join(SNER_ROOT, 'classifiers/english.muc.7class.distsim.crf.ser.gz')
