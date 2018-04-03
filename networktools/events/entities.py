@@ -9,7 +9,7 @@ import os, sys
 
 SNER_ROOT = '/home/rahuezo/Downloads/stanford-ner-2018-02-27'
 CLASSIFIER = os.path.join(SNER_ROOT, 'classifiers/english.muc.7class.distsim.crf.ser.gz')
-JAR_FILE = os.path.join('stanford-ner.jar')
+JAR_FILE = os.path.join(SNER_ROOT, 'stanford-ner.jar')
 
 if not os.path.exists(SNER_ROOT): 
     print """You need to download SNER from https://nlp.stanford.edu/software/stanford-ner-2018-02-27.zip.
