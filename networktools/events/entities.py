@@ -9,12 +9,6 @@ CLASSIFIER = '/home/rudyhuezo/Downloads/stanford-ner-2018-02-27/classifiers/engl
 JAR_FILE = '/home/rudyhuezo/Downloads/stanford-ner-2018-02-27/stanford-ner.jar'
 
 
-
-def get_people_spacy(text): 
-    nlp = spacy.load('en')
-    return [entity.text for entity in filter(lambda x: x.label_.lower() == 'person', nlp(unicode(text)).ents)]
-
-
 def stanford_ner(text): 
     sner = StanfordNERTagger(CLASSIFIER, JAR_FILE)
     return sner.tag(word_tokenize(text))
