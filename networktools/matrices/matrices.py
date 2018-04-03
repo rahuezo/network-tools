@@ -20,6 +20,12 @@ class AdjacencyMatrix:
         return '{} and {}'.format(*edge)
 
     @staticmethod
+    def get_comparison_name(filename1, label1, filename2, label2): 
+        filename1 = filename1.lower().replace('.csv', '')
+        filename2 = filename2.lower().replace('.csv', '')
+        return '{fn1} {lb1} vs {fn2} {lb2} Comparison.csv'.format(fn1=filename1, lb1=label1, fn2=filename2, lb2=label2)
+
+    @staticmethod
     def summarize(columns): 
         return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
 
@@ -81,7 +87,7 @@ class AdjacencyMatrix:
             map(AdjacencyMatrix.str_edge, self.get_unique(edges_b, edges_a))]
         )
 
-        return [header] + AdjacencyMatrix.summarize(columns)
+        return AdjacencyMatrix.get_comparison_name(self.filename, label1, matrix.filename, label2), [header] + AdjacencyMatrix.summarize(columns)
 
     def build(self): 
         graph = self.create_graph()        
