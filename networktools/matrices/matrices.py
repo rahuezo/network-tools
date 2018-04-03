@@ -15,6 +15,14 @@ except ImportError:
 
 
 class AdjacencyMatrix: 
+    @staticmethod
+    def str_edge(edge): 
+        return '{} and {}'.format(*edge)
+
+    @staticmethod
+    def summarize(columns): 
+        return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
+
     def __init__(self, filename, rows, header=True, from_events=True): 
         self.filename = filename
         self.rows = rows[1:] if header else rows        
@@ -49,16 +57,31 @@ class AdjacencyMatrix:
     def get_unique(self, a, b): 
         return set(a) - set(b)
 
-    def compare(self, matrix): 
+    def compare(self, label1, label2, matrix):
+        header = [
+            'Node Overlap', 
+            'Edge Overlap',
+            'Unique Nodes for {}'.format(label1),
+            'Unique Nodes for {}'.format(label2), 
+            'Unique Edges for {}'.format(label1),
+            'Unique Edges for {}'.format(label2)
+        ] 
+
         graph_a = self.create_graph()
         graph_b = matrix.create_graph()
 
         nodes_a, edges_a = graph_a.nodes(), graph_a.edges()
         nodes_b, edges_b = graph_b.nodes(), graph_b.edges()
 
-        return add_padding([self.get_overlap(nodes_a, nodes_b), self.get_overlap(edges_a, edges_b),
-            self.get_unique(nodes_a, nodes_b), self.get_unique(nodes_b, nodes_a), 
-            self.get_unique(edges_a, edges_b), self.get_unique(edges_b, edges_a)])
+        columns = add_padding([self.get_overlap(nodes_a, nodes_b), 
+            map(AdjacencyMatrix.str_edge, self.get_overlap(edges_a, edges_b)),
+            self.get_unique(nodes_a, nodes_b), 
+            self.get_unique(nodes_b, nodes_a), 
+            map(AdjacencyMatrix.str_edge, self.get_unique(edges_a, edges_b)), 
+            map(AdjacencyMatrix.str_edge, self.get_unique(edges_b, edges_a))]
+        )
+
+        return [header] + AdjacencyMatrix.summarize(columns)
 
     def build(self): 
         graph = self.create_graph()        
@@ -70,25 +93,3 @@ class AdjacencyMatrix:
 
         labels.insert(0, '')
         return self.get_matrix_name(), pd.DataFrame.from_records(adjacency_matrix, columns=labels)
-
-# a = [
-#     ['A', 'B'], 
-#     ['A', 'C'],
-#     ['C', 'D'],
-#     ['B', 'C']
-# ]
-
-# b = [
-#     ['A', 'B'], 
-#     ['C', 'D'],
-#     ['B', 'C'], 
-#     ['E', 'C'],
-#     ['E', 'F'], 
-# ]
-
-# mat1 = AdjacencyMatrix('mat1', a, header=False, from_events=False)
-# mat2 = AdjacencyMatrix('mat2', b, header=False, from_events=False)
-
-# for i in mat1.compare(mat2): 
-#     print i
-#     print 
