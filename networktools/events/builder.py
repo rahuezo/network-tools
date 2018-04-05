@@ -3,14 +3,20 @@ from networktools.files.sanitizer import sanitize_string
 from entities import get_people
 
 import pandas as pd
+import sys, os
+
+try: 
+    ONLINE = eval(os.environ['ONLINE'])
+except: 
+    print """You must set ONLINE env variable first.\nIt can either be 0 or 1."""
+    sys.exit()
 
 
 class EventBuilder: 
     @staticmethod
-    def get_event_header(f, online=True): 
+    def get_event_header(f, online=ONLINE): 
         if not online: 
             f = f.split('/')[-1]
-
         return sanitize_string(' '.join(f[::-1].split('.')[1:])[::-1].upper())
 
     @staticmethod
@@ -25,7 +31,7 @@ class EventBuilder:
     def build(self): 
         events = {}
         for f in self.files:             
-            header = EventBuilder.get_event_header(f, online=False)
+            header = EventBuilder.get_event_header(f, online=ONLINE)
             text = FileReader(f).read()
             people = get_people(text)
 
