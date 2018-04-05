@@ -13,6 +13,8 @@ try:
 except ImportError: 
     print 'You need to install pandas. Try, sudo pip install pandas'
 
+import csv
+
 
 class AdjacencyMatrix: 
     @staticmethod
@@ -29,9 +31,14 @@ class AdjacencyMatrix:
     def summarize(columns): 
         return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
 
-    def __init__(self, filename, rows, header=True, from_events=True): 
-        self.filename = filename
-        self.rows = rows[1:] if header else rows        
+    @staticmethod
+    def read_rows_file(f, truncated): 
+        with open(f, 'rb') as csv_file:             
+            return [row for row in csv.reader(csv_file, delimiter=',')][truncated:]
+            
+    def __init__(self, rows_file, header=True, from_events=True): 
+        self.filename = rows_file
+        self.rows = AdjacencyMatrix.read_rows_file(rows_file, header)
         self.from_events = from_events
 
     def get_matrix_name(self): 
@@ -39,7 +46,7 @@ class AdjacencyMatrix:
 
     def get_events(self): 
         df = pd.DataFrame(self.rows)
-        return [[sanitize_string(cell) for cell in df[col_name].tolist()[1:] if sanitize_string(cell)]
+        return [[sanitize_string(cell) for cell in df[col_name].tolist() if sanitize_string(cell)]
                 for col_name in df]
 
     def create_graph(self): 
