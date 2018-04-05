@@ -8,21 +8,21 @@ from nltk.chunk import conlltags2tree
 from nltk.tree import Tree
 
 
-SNER_ROOT = '/home/rahuezo/Downloads/stanford-ner-2018-02-27'
-CLASSIFIER = os.path.join(SNER_ROOT, 'classifiers/english.muc.7class.distsim.crf.ser.gz')
-JAR_FILE = os.path.join(SNER_ROOT, 'stanford-ner.jar')
-
-if not os.path.exists(SNER_ROOT): 
-    print """You need to download SNER from https://nlp.stanford.edu/software/stanford-ner-2018-02-27.zip.
-    Extract the folder and change SNER_ROOT"""
+try: 
+    SNER_ROOT = os.environ['SNER_ROOT']     #'/home/rahuezo/Downloads/stanford-ner-2018-02-27'
+except: 
+    print """You must set SNER_ROOT env variable first.\nYou need to download SNER from https://nlp.stanford.edu/software/stanford-ner-2018-02-27.zip.
+    Extract the folder and change add os.environ['SNER_ROOT'] = <PATH OF stanford-ner-2018-02-27>\n"""
     sys.exit()
 
-
+CLASSIFIER = os.path.join(SNER_ROOT, 'classifiers/english.muc.7class.distsim.crf.ser.gz')
+JAR_FILE = os.path.join(SNER_ROOT, 'stanford-ner.jar')
 
 
 def stanford_ner(text): 
     sner = StanfordNERTagger(CLASSIFIER, JAR_FILE)
     return sner.tag(word_tokenize(text))
+
 
 def stanford_ner_to_bio(ner_tagged_text): 
     bio_tagged = []
@@ -65,12 +65,3 @@ def get_people(text):
             if subtree.label() == 'PERSON': 
                 people.add(' '.join([token for token, pos in subtree.leaves()]))
     return sorted(list(people))
-
-
-
-
-
-
-
-
-
