@@ -49,6 +49,9 @@ def read_txt(f):
     Raises:
         None.
     """ 
+    if ONLINE: 
+        f = f.file 
+        
     with open(f, 'r') as input_file: 
         return sanitize_string(input_file.read())
 
