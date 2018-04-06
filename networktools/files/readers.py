@@ -49,11 +49,7 @@ def read_txt(f):
     Raises:
         None.
     """ 
-    # if ONLINE: 
-    #     f = f.file 
-
-    with open(f, 'r') as input_file: 
-        return sanitize_string(input_file.read())
+    return sanitize_string(f.read())
 
 
 class FileReader(ExtensionHandler): 
@@ -62,17 +58,17 @@ class FileReader(ExtensionHandler):
     and lets you read the contents of a file.
     """
 
-    def __init__(self, input_file): 
-        ExtensionHandler.__init__(self, input_file)
+    def __init__(self, f): 
+        ExtensionHandler.__init__(self, f)
 
     def read(self): 
         extension = self.get_extension()
 
         if extension == 'docx': 
-            return read_docx(self.input_file)
+            return read_docx(self.f)
 
         elif extension == 'txt': 
-            return read_txt(self.input_file)
+            return read_txt(self.f)
         else: 
             print '\nThis is an unsupported file of type {}\n'.format(extension)
             return None

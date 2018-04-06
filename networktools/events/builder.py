@@ -14,10 +14,8 @@ except:
 
 class EventBuilder: 
     @staticmethod
-    def get_event_header(f, online=ONLINE): 
-        if not online: 
-            f = f.split('/')[-1]
-        return sanitize_string(' '.join(f.name[::-1].split('.')[1:])[::-1].upper())
+    def get_event_header(f): 
+        return sanitize_string(' '.join(f[::-1].split('.')[1:])[::-1].upper())
 
     @staticmethod
     def dict_to_rows(d): 
@@ -31,7 +29,7 @@ class EventBuilder:
     def build(self): 
         events = {}
         for f in self.files:             
-            header = EventBuilder.get_event_header(f, online=ONLINE)
+            header = EventBuilder.get_event_header(f.name)
             text = FileReader(f).read()
             people = get_people(text)
 
