@@ -1,11 +1,5 @@
 import os, sys
 
-try: 
-    ONLINE = eval(os.environ['ONLINE'])
-except: 
-    print """You must set ONLINE env variable first.\nIt can either be 0 or 1."""
-    sys.exit()
-
 from extensions import ExtensionHandler
 from sanitizer import sanitize_string
 
@@ -27,12 +21,9 @@ def read_docx(f):
         import docx
     except ImportError: 
         print 'You need to install docx. Try, sudo pip install python-docx'
-        return None
+        sys.exit()
 
-    if not ONLINE:
-        document = docx.Document(f)
-    else:  
-        document = docx.Document(f.file)
+    document = docx.Document(f)
     return ''.join([sanitize_string(p.text) for p in document.paragraphs])
 
 

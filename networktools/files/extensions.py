@@ -1,11 +1,5 @@
 import os, sys
 
-try: 
-    ONLINE = eval(os.environ['ONLINE'])
-except: 
-    print """You must set ONLINE env variable first.\nIt can either be 0 or 1."""
-    sys.exit()
-
 
 class ExtensionHandler: 
     """

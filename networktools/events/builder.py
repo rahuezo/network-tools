@@ -5,12 +5,6 @@ from entities import get_people
 import pandas as pd
 import sys, os
 
-try: 
-    ONLINE = eval(os.environ['ONLINE'])
-except: 
-    print """You must set ONLINE env variable first.\nIt can either be 0 or 1."""
-    sys.exit()
-
 
 class EventBuilder: 
     @staticmethod
@@ -29,9 +23,8 @@ class EventBuilder:
     def build(self): 
         events = {}
         for f in self.files:             
-            header = EventBuilder.get_event_header(f.name)
-            text = FileReader(f).read()
-            people = get_people(text)
+            header = EventBuilder.get_event_header(f[0])
+            people = get_people(f[1])
 
             if people: 
                 events[header] = people
