@@ -33,12 +33,12 @@ class AdjacencyMatrix:
 
     @staticmethod
     def read_rows_file(f, truncated): 
-        with open(f, 'rb') as csv_file:             
-            return [row for row in csv.reader(csv_file, delimiter=',')][truncated:]
+        f = f.read()
+        return [row for row in csv.DictReader(f)][truncated:]
             
     def __init__(self, rows_file, header=True, from_events=True): 
-        self.filename = rows_file
-        self.rows = AdjacencyMatrix.read_rows_file(rows_file, header)
+        self.filename = rows_file[0]
+        self.rows = [row for row in rows_file[1]][header:] #AdjacencyMatrix.read_rows_file(rows_file[1], header)
         self.from_events = from_events
 
     def get_matrix_name(self): 
@@ -106,3 +106,64 @@ class AdjacencyMatrix:
 
         labels.insert(0, '')
         return self.get_matrix_name(), pd.DataFrame.from_records(adjacency_matrix, columns=labels)
+
+
+class NetworkComparison:
+    @staticmethod
+    def to_network(rows): 
+        nodes = map(sanitize_string, rows[0][1:])
+        values = map(lambda x: x[1:], rows[1:]) 
+
+        network = nx.Graph()
+
+        network.add_edges_from([(nodes[i], nodes[j], {'stance': values[i][j]}) 
+            for i in xrange(len(nodes)) for j in xrange(i + 1, len(nodes)) if int(values[i][j]) > 0])
+        return network
+
+    @staticmethod
+    def get_overlap(a, b): 
+        return set(a).intersection(set(b))
+
+    @staticmethod
+    def get_difference(a, b): 
+        return set(a) - set(b)
+
+    @staticmethod
+    def summarize(columns): 
+        return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
+
+    def __init__(self, fileA, fileB, labelA, labelB): 
+        self.filenameA, self.rowsA = fileA
+        self.filenameB, self.rowsB = fileB
+
+        self.labelA, self.labelB = labelA, labelB
+
+    def get_comparison_name(self): 
+        networkA_label = self.filenameA.lower().replace('.csv', '').title()
+        networkB_label = self.filenameB.lower().replace('.csv', '').title()
+        return '{} vs {} Comparison.csv'.format(networkA_label, networkB_label)
+
+    def compare(self): 
+        header = [
+            'Node Overlap', 'Edge Overlap',
+            'Unique Nodes for {}'.format(self.labelA), 'Unique Nodes for {}'.format(self.labelB), 
+            'Unique Edges for {}'.format(self.labelA), 'Unique Edges for {}'.format(self.labelB)
+        ]
+
+        networkA = NetworkComparison.to_network(self.rowsA)
+        networkB = NetworkComparison.to_network(self.rowsB)
+
+        nodesA, edgesA = networkA.nodes(), networkA.edges()
+        nodesB, edgesB = networkB.nodes(), networkB.edges()
+
+        columns = add_padding(
+            [
+                NetworkComparison.get_overlap(nodesA, nodesB), 
+                map(AdjacencyMatrix.str_edge, NetworkComparison.get_overlap(edgesA, edgesB)),
+                NetworkComparison.get_difference(nodesA, nodesB),
+                NetworkComparison.get_difference(nodesB, nodesA),
+                map(AdjacencyMatrix.str_edge, NetworkComparison.get_difference(edgesA, edgesB)),
+                map(AdjacencyMatrix.str_edge, NetworkComparison.get_difference(edgesB, edgesA)),
+            ]
+        )
+        return self.get_comparison_name(), [header] + NetworkComparison.summarize(columns)
