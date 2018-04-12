@@ -133,8 +133,11 @@ class NetworkComparison:
         return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
 
     def __init__(self, fileA, fileB, labelA, labelB): 
-        self.filenameA, self.rowsA = fileA
-        self.filenameB, self.rowsB = fileB
+        self.filenameA = fileA[0]
+        self.rowsA = [row for row in fileA[1]]
+
+        self.filenameB = fileB[0]
+        self.rowsB = [row for row in fileB[1]]
 
         self.labelA, self.labelB = labelA, labelB
 
