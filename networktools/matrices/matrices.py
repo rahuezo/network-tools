@@ -20,25 +20,10 @@ class AdjacencyMatrix:
     @staticmethod
     def str_edge(edge): 
         return '{} and {}'.format(*edge)
-
-    @staticmethod
-    def get_comparison_name(filename1, label1, filename2, label2): 
-        filename1 = filename1.lower().replace('.csv', '')
-        filename2 = filename2.lower().replace('.csv', '')
-        return '{fn1} {lb1} vs {fn2} {lb2} Comparison.csv'.format(fn1=filename1, lb1=label1, fn2=filename2, lb2=label2)
-
-    @staticmethod
-    def summarize(columns): 
-        return [[columns[j][i] for j in xrange(len(columns))] for i in xrange(len(columns[0]))]
-
-    @staticmethod
-    def read_rows_file(f, truncated): 
-        f = f.read()
-        return [row for row in csv.DictReader(f)][truncated:]
             
     def __init__(self, rows_file, header=True, from_events=True, weighted=False): 
         self.filename = rows_file[0]
-        self.rows = [row for row in rows_file[1]][header:] #AdjacencyMatrix.read_rows_file(rows_file[1], header)
+        self.rows = [row for row in rows_file[1]][header:]
         self.from_events = from_events
         self.weighted = weighted
 
@@ -74,38 +59,6 @@ class AdjacencyMatrix:
                 print 'This is not a node pairs file.'
                 return None
         return graph
-
-    def get_overlap(self, a, b): 
-        return set(a).intersection(set(b))
-
-    def get_unique(self, a, b): 
-        return set(a) - set(b)
-
-    def compare(self, label1, label2, matrix):
-        header = [
-            'Node Overlap', 
-            'Edge Overlap',
-            'Unique Nodes for {}'.format(label1),
-            'Unique Nodes for {}'.format(label2), 
-            'Unique Edges for {}'.format(label1),
-            'Unique Edges for {}'.format(label2)
-        ] 
-
-        graph_a = self.create_graph()
-        graph_b = matrix.create_graph()
-
-        nodes_a, edges_a = graph_a.nodes(), graph_a.edges()
-        nodes_b, edges_b = graph_b.nodes(), graph_b.edges()
-
-        columns = add_padding([self.get_overlap(nodes_a, nodes_b), 
-            map(AdjacencyMatrix.str_edge, self.get_overlap(edges_a, edges_b)),
-            self.get_unique(nodes_a, nodes_b), 
-            self.get_unique(nodes_b, nodes_a), 
-            map(AdjacencyMatrix.str_edge, self.get_unique(edges_a, edges_b)), 
-            map(AdjacencyMatrix.str_edge, self.get_unique(edges_b, edges_a))]
-        )
-
-        return AdjacencyMatrix.get_comparison_name(self.filename, label1, matrix.filename, label2), [header] + AdjacencyMatrix.summarize(columns)
 
     def build(self): 
         graph = self.create_graph()        
@@ -184,3 +137,4 @@ class NetworkComparison:
             ]
         )
         return self.get_comparison_name(), [header] + NetworkComparison.summarize(columns)
+        
