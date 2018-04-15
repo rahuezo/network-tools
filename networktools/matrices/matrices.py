@@ -36,10 +36,11 @@ class AdjacencyMatrix:
         f = f.read()
         return [row for row in csv.DictReader(f)][truncated:]
             
-    def __init__(self, rows_file, header=True, from_events=True): 
+    def __init__(self, rows_file, header=True, from_events=True, weighted=False): 
         self.filename = rows_file[0]
         self.rows = [row for row in rows_file[1]][header:] #AdjacencyMatrix.read_rows_file(rows_file[1], header)
         self.from_events = from_events
+        self.weighted = weighted
 
     def get_matrix_name(self): 
         return '{}_adjacency_matrix.csv'.format(self.filename.lower().split('.csv')[0].replace(' ', '_'))
@@ -53,9 +54,19 @@ class AdjacencyMatrix:
         graph = nx.Graph()
 
         if self.from_events: 
-            for event in self.get_events(): 
-                graph.add_edges_from([(event[i], event[j]) for i in xrange(len(event)) 
-                    for j in xrange(i + 1, len(event))])
+            edges = []
+
+            for event in self.get_events():
+                for i in xrange(len(event)): 
+                    for j in xrange(i + 1, len(event)): 
+                        edges.append((event[i], event[j]))
+
+            for edge in edges: 
+                if graph.has_edge(edge[0], edge[1]): 
+                    old_weight = graph[edge[0]][edge[1]]['weight']
+                    graph[edge[0]][edge[1]]['weight'] = old_weight + 1
+                else: 
+                    graph.add_edge(edge[0], edge[1], weight=1) 
         else: 
             if is_pairs_network(self.rows): 
                 graph.add_edges_from(self.rows)            
@@ -99,7 +110,10 @@ class AdjacencyMatrix:
     def build(self): 
         graph = self.create_graph()        
         labels = sorted(graph.nodes())
-        adjacency_matrix = nx.adjacency_matrix(graph, nodelist=labels).todense().tolist()
+        if not self.weighted: 
+            adjacency_matrix = nx.adjacency_matrix(graph, nodelist=labels).todense().tolist()
+        else: 
+            adjacency_matrix = nx.attr_matrix(graph, edge_attr='weight', rc_order=labels).tolist()
 
         for i in xrange(len(adjacency_matrix)): 
             adjacency_matrix[i].insert(0, labels[i])        
