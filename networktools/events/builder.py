@@ -17,8 +17,9 @@ class EventBuilder:
         df = df.fillna('')
         return [list(df.columns.values)] + df.values.tolist()
 
-    def __init__(self, files): 
+    def __init__(self, files, keep_ner=False): 
         self.files = files
+        self.keep_ner = keep_ner
 
     def build(self): 
         events = {}

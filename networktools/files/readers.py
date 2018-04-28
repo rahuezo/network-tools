@@ -4,7 +4,7 @@ from extensions import ExtensionHandler
 from sanitizer import sanitize_string
 
 
-def read_docx(f):
+def read_docx(f, raw=False):
     """
     This function gets the alphanumeric content in a docx file.
 
@@ -24,10 +24,12 @@ def read_docx(f):
         sys.exit()
 
     document = docx.Document(f)
+    if raw: 
+        return ''.join([p.text for p in document.paragraphs])
     return ''.join([sanitize_string(p.text) for p in document.paragraphs])
 
 
-def read_txt(f):
+def read_txt(f, raw=False):
     """
     This function gets the alphanumeric content in a txt file.
 
@@ -40,6 +42,8 @@ def read_txt(f):
     Raises:
         None.
     """ 
+    if raw: 
+        return f.read()
     return sanitize_string(f.read())
 
 
@@ -52,14 +56,14 @@ class FileReader(ExtensionHandler):
     def __init__(self, f): 
         ExtensionHandler.__init__(self, f)
 
-    def read(self): 
+    def read(self, raw=False): 
         extension = self.get_extension()
 
         if extension == 'docx': 
-            return read_docx(self.f)
+            return read_docx(self.f, raw=raw)
 
         elif extension == 'txt': 
-            return read_txt(self.f)
+            return read_txt(self.f, raw=raw)
         else: 
             print '\nThis is an unsupported file of type {}\n'.format(extension)
             return None
