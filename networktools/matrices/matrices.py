@@ -84,7 +84,7 @@ class NetworkComparison:
         network = nx.Graph()
 
         network.add_edges_from([(nodes[i], nodes[j], {'stance': values[i][j]}) 
-            for i in xrange(len(nodes)) for j in xrange(i + 1, len(nodes)) if int(values[i][j]) > 0])
+            for i in xrange(len(nodes)) for j in xrange(i + 1, len(nodes)) if int(float(values[i][j])) > 0])
         return network
 
     @staticmethod
